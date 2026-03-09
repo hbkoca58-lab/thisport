@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, desktopCapturer } = require('electron');
 const path = require('path');
-const { PeerServer } = require('peer');
 const express = require('express');
 
 let mainWindow;
@@ -30,12 +29,7 @@ app.whenReady().then(() => {
     server = expressApp.listen(3000, () => {
         console.log("Local Express server running on port 3000");
         
-        try { 
-            PeerServer({ port: 9000, path: '/thisport' }); 
-            console.log("PeerServer active on port 9000.");
-        } catch(e){
-            console.error("PeerServer failed to start:", e);
-        }
+        // PEER SERVER KODLARI TAMAMEN SİLİNDİ ÇÜNKÜ ARTIK GLOBAL BULUTTAYIZ!
 
         ipcMain.handle('get-screen-sources', async (event, type) => {
             const sources = await desktopCapturer.getSources({ 
@@ -60,7 +54,6 @@ app.on('window-all-closed', () => {
 ipcMain.on('minimize-window', () => mainWindow.minimize());
 ipcMain.on('close-window', () => mainWindow.close());
 
-// FULLSCREEN (MAXIMIZE) FIX
 ipcMain.on('toggle-maximize', () => {
     if (mainWindow.isMaximized()) {
         mainWindow.unmaximize();
@@ -69,7 +62,6 @@ ipcMain.on('toggle-maximize', () => {
     }
 });
 
-// BUG YENİLEME HİLESİ
 ipcMain.on('fix-bug', () => {
     if (mainWindow) {
         mainWindow.minimize(); 
