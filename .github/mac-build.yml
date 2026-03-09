@@ -1,0 +1,33 @@
+name: Build macOS DMG
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-mac:
+    runs-on: macos-latest # GitHub'ın bize verdiği ücretsiz Mac bilgisayar
+
+    steps:
+      - name: Kodu Klonla
+        uses: actions/checkout@v3
+
+      - name: Node.js Kur
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Bagimliliklari Yukle
+        run: npm install
+
+      - name: macOS Icin Derle (.dmg)
+        run: npm run build:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: DMG Dosyasini Kaydet
+        uses: actions/upload-artifact@v3
+        with:
+          name: Thisport-Mac-Setup
+          path: dist/*.dmg
